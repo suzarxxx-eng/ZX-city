@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@700;900&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- الأرينا -->
+<div id="hud" class="hidden">
+  <div class="badge"><span class="en" id="hEn">PISTOL</span><b id="hLabel">أرينا المسدس</b><small id="hPlace"></small></div>
+  <div class="kd"><div><b id="hK">0</b><small>قتل</small></div><div><b id="hD">0</b><small>موت</small></div><div><b id="hR">0.0</b><small>K/D</small></div></div>
+  <div class="side">
+    <div class="board"><div class="bh">الترتيب <span id="hCount">0</span></div><ol id="hBoard"></ol></div>
+    <div id="feed" class="feed"></div>
+  </div>
+  <div class="hint"><kbd>ESC</kbd> أو <kbd>/leavearena</kbd> حتى تطلع</div>
+</div>
+
+<!-- تيد ام -->
+<div id="tdm" class="hidden">
+  <div class="score">
+    <div class="tm red"><small>الأحمر</small><b id="sRed">0</b></div>
+    <div class="mid"><b id="tTimer">10:00</b><small id="tGoal">أول فريق يوصل 30</small></div>
+    <div class="tm blue"><small>الأزرق</small><b id="sBlue">0</b></div>
+  </div>
+  <div class="myTeam" id="myTeam">فريقك: الأحمر • AK</div>
+  <div id="tFeed" class="feed tfeed"></div>
+  <div id="result" class="result hidden">
+    <small>انتهت الجولة</small>
+    <h1 id="rTitle">فاز الفريق الأحمر</h1>
+    <div class="rScore"><span class="red" id="rRed">0</span> : <span class="blue" id="rBlue">0</span></div>
+    <div class="mvp" id="rMvp"></div>
+    <div class="rTables"><ol id="rRedList" class="red"></ol><ol id="rBlueList" class="blue"></ol></div>
+    <small class="muted">ترجعون للمدينة بعد ثواني، والغرفة تبقى مفتوحة</small>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

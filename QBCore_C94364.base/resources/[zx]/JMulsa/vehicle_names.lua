@@ -1,0 +1,7 @@
+Citizen.CreateThread(function()
+	AddTextEntry('0x1CBA5FBF', 'ULSAPD Cruiser')
+	AddTextEntry('0x62E2DFB4', 'ULSA EMS SUV')
+	AddTextEntry('0x154EDDB5', 'ULSAPD SUV')
+	AddTextEntry('0xA4267080', 'ULSA Ambulance')
+	AddTextEntry('0xDAD6187A', 'ULSA Dilettante')
+end)

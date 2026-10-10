@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحقيبة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+<div id="stage" class="hidden">
+  <main id="app">
+    <!-- حقيبة اللاعب -->
+    <section class="panel inv" id="playerPanel">
+      <header class="inv-head">
+        <div class="title">
+          <h1>الحقيبة</h1>
+          <span class="tag" id="pTag">30 خانة</span>
+        </div>
+        <div class="wt"><b id="pW">0</b> / <span id="pMax">150</span> كغم</div>
+      </header>
+      <div class="bar"><i id="pBar"></i></div>
+      <div id="pGrid" class="grid"></div>
+      <div class="hot-label">خانات الاستخدام السريع <small>المفاتيح 1 - 5</small></div>
+      <div id="pHot" class="grid hot"></div>
+    </section>
+
+    <!-- اللوحة الوسطى -->
+    <aside class="panel side" id="side">
+      <div class="gauge">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="track" cx="50" cy="50" r="42"/>
+          <circle id="ring" class="fill" cx="50" cy="50" r="42"/>
+        </svg>
+        <div class="gauge-text">
+          <strong id="gW">0</strong>
+          <span>من <b id="gMax">150</b> كغم</span>
+        </div>
+      </div>
+
+      <div id="detail" class="detail empty">
+        <p class="none">اختر غرضاً لعرض تفاصيله</p>
+        <div class="info">
+          <div class="head">
+            <div id="dIcon" class="d-icon"></div>
+            <div class="d-txt">
+              <h2 id="dName"></h2>
+              <p id="dDesc"></p>
+            </div>
+          </div>
+          <dl id="dList"></dl>
+          <div class="amount" id="amountBox">
+            <span>الكمية</span>
+            <div class="amt-row">
+              <button type="button" id="aMin" aria-label="نقصان">−</button>
+              <input id="amt" type="number" min="1" value="1" inputmode="numeric">
+              <button type="button" id="aPlus" aria-label="زيادة">+</button>
+              <button type="button" id="aHalf" class="chip">النصف</button>
+              <button type="button" id="aAll" class="chip">الكل</button>
+            </div>
+          </div>
+          <div class="actions" id="actions"></div>
+        </div>
+      </div>
+
+      <div id="zones" class="zones hidden">
+        <div class="zone use" data-zone="use"><span>⚡</span>استخدام</div>
+        <div class="zone give" data-zone="give"><span>🤝</span>إعطاء لأقرب لاعب</div>
+        <div class="zone ground" data-zone="ground"><span>⬇</span>رمي على الأرض</div>
+      </div>
+
+      <p class="hint" id="hint"></p>
+    </aside>
+
+    <!-- المخزن الآخر (صندوق سيارة / خزنة / متجر / أرض / لاعب) -->
+    <section class="panel inv other hidden" id="otherPanel">
+      <header class="inv-head">
+        <div class="title">
+          <h1 id="oName">المخزن</h1>
+          <span class="tag" id="oTag"></span>
+        </div>
+        <div class="wt" id="oWt"><b id="oW">0</b> / <span id="oMax">0</span> كغم</div>
+      </header>
+      <div class="bar" id="oBarBox"><i id="oBar"></i></div>
+      <div id="oGrid" class="grid scroll"></div>
+    </section>
+  </main>
+</div>
+
+<!-- نافذة ملحقات السلاح -->
+<div id="attach" class="modal hidden">
+  <div class="modal-box panel">
+    <header class="inv-head">
+      <div class="title"><h1>ملحقات السلاح</h1></div>
+      <button type="button" class="x" id="attachClose" aria-label="إغلاق">✕</button>
+    </header>
+    <div class="weapon-view">
+      <div id="attachWeapon" class="d-icon big"></div>
+      <h2 id="attachName"></h2>
+    </div>
+    <p class="hint">اضغط على الملحق لإزالته وإرجاعه إلى الحقيبة</p>
+    <div id="attachList" class="attach-list"></div>
+  </div>
+</div>
+
+<!-- اختيار اللاعب عند الإعطاء -->
+<div id="picker" class="picker hidden">
+  <div class="picker-box panel">
+    <h2>إعطاء الغرض لـ…</h2>
+    <div class="picker-sub" id="pkSub"></div>
+    <div id="pkList" class="pk-list"></div>
+    <div class="pk-btns">
+      <button type="button" class="go" id="pkGo">إعطاء</button>
+      <button type="button" id="pkCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<nav id="hotbar"class="hidden" aria-label="خانات الاستخدام السريع"></nav>
+<div id="required" class="hidden"></div>
+<div id="itemBoxes"></div>
+<div id="toasts"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

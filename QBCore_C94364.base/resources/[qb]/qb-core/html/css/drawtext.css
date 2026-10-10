@@ -1,0 +1,41 @@
+/* نص "اضغط E" بنفس الستايل الأزرق */
+#drawtext-container {
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.text {
+    position: absolute;
+    direction: rtl;
+    padding: 9px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(10, 26, 54, 0.95), rgba(6, 15, 32, 0.92));
+    border: 1px solid rgba(47, 140, 255, 0.4);
+    border-right: 4px solid #2f8cff;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 16px rgba(47, 140, 255, 0.2);
+    color: #dcecff;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+}
+
+.text.pressed {
+    background: linear-gradient(135deg, #2f8cff, #1d5fc4);
+    color: #fff;
+}
+
+.top { left: 50%; transform: translateX(-50%); top: -100px; }
+.top.show { transition: 0.4s; top: 14px; opacity: 1; }
+.top.hide { transition: 0.4s; top: -100px; opacity: 0; }
+
+.right { top: 50%; right: -300px; }
+.right.show { transition: 0.4s; right: 14px; opacity: 1; }
+.right.hide { transition: 0.4s; right: -300px; opacity: 0; }
+
+.left { top: 50%; left: -300px; }
+.left.show { transition: 0.4s; left: 14px; opacity: 1; }
+.left.hide { transition: 0.4s; left: -300px; opacity: 0; }

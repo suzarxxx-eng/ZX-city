@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap");
+
+html {
+    overflow: hidden;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.progress-container {
+    display: none;
+    z-index: 5;
+    color: #fff;
+    width: 15%;
+    position: fixed;
+    bottom: 15%;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Poppins", sans-serif;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#progress-label {
+    font-size: 1.3vh;
+    line-height: 4vh;
+    position: relative;
+    color: #ffffff;
+    z-index: 10;
+    font-weight: bold;
+}
+
+#progress-percentage {
+    font-size: 1.3vh;
+    line-height: 4vh;
+    position: relative;
+    color: #ffffff;
+    z-index: 10;
+    font-weight: bold;
+}
+
+.progress-bar-container {
+    background: rgba(0, 0, 0, 0.246);
+    height: 0.5vh;
+    position: relative;
+    display: block;
+    border-radius: 2px;
+}
+
+#progress-bar {
+    background-color: #dc143c;
+    width: 0%;
+    height: 0.5vh;
+    border-radius: 2px;
+    transition: width 0.3s;
+    transition-timing-function: ease-out;
+    box-shadow: 0 0 10px rgba(220, 20, 60, 0.6);
+}
+
+/* شريط التعشيق: ذهبي مع رصاصات */
+.bullets {
+    display: none;
+    gap: 0.6vh;
+    margin-top: 1vh;
+    direction: ltr;
+}
+
+.progress-container.reload .bullets {
+    display: flex;
+}
+
+.bullets span {
+    width: 0.9vh;
+    height: 2.4vh;
+    border-radius: 0.3vh 0.3vh 0.1vh 0.1vh;
+    background: rgba(255, 255, 255, 0.18);
+    transition: background 0.12s;
+}
+
+.bullets span.on {
+    background: #f2c75c;
+    box-shadow: 0 0 6px rgba(242, 199, 92, 0.6);
+}
+
+.progress-container.reload #progress-label {
+    font-size: 1.6vh;
+    line-height: 3vh;
+}
+
+.progress-container.reload #progress-percentage {
+    color: #f2c75c;
+    font-size: 1.5vh;
+}
+
+.progress-container.reload .progress-bar-container {
+    display: none;
+}

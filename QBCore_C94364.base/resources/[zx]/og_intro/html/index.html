@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OG</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@600;700;900&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="slides"></div>
+<canvas id="grain"></canvas>
+<div class="shade"></div>
+
+<!-- اسم المكان (فوك يمين) -->
+<div id="place" class="place"><b id="placeEn">LOS SANTOS</b><span id="placeAr">لوس سانتوس</span></div>
+
+<!-- الشعار -->
+<div class="brand">
+  <div class="logo">OG</div>
+  <div class="sub">ROLEPLAY</div>
+  <div class="tag">مدينة وحدة... وقصص ما تخلص</div>
+</div>
+
+<!-- النصايح -->
+<div class="tips">
+  <div class="tipHead"><span class="dot"></span>نصيحة</div>
+  <div id="tip" class="tip"></div>
+</div>
+
+<!-- التحميل: دائرة روكستار -->
+<div class="loader">
+  <div class="ltxt"><b id="lState">جاري التحميل</b><span id="lPct">0%</span></div>
+  <svg class="spin" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/></svg>
+</div>
+<div class="progress"><i id="bar"></i></div>
+
+<!-- الموسيقى -->
+<button type="button" id="mute" class="mute" title="الموسيقى">
+  <svg viewBox="0 0 24 24"><path id="mIcon" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+</button>
+<audio id="music" src="../assets/music.mp3" loop autoplay></audio>
+
+<script src="script.js"></script>
+</body>
+</html>

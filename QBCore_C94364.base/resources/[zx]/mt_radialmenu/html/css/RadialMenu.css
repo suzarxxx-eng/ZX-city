@@ -1,0 +1,257 @@
+div.menuHolder {
+    position: relative;
+    user-select: none;
+    -moz-user-select: none;
+    position: relative;
+    margin: 10px;
+
+}
+
+.menuHolder::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    -webkit-mask: radial-gradient(circle at 50% 50%,
+            transparent 49%,
+            #000 50%);
+    mask: radial-gradient(circle at 50% 50%,
+            transparent 49%,
+            #000 50%);
+    background: linear-gradient(var(--angle), rgba(30, 144, 255, 0) 0%, rgba(16, 77, 153, 0.499) 100%);
+}
+
+.menuHolder::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 50%;
+
+
+    -webkit-mask: radial-gradient(circle at 50% 50%,
+            transparent 49%,
+            #000 50%);
+    mask: radial-gradient(circle at 50% 50%,
+            transparent 49%,
+            #000 50%);
+
+    background-color: #0000009c;
+}
+
+svg.icons {
+    display: none;
+}
+
+svg.menu {
+    position: absolute;
+    z-index: 2;
+    overflow: visible;
+    transition:
+        transform 120ms ease-out,
+        opacity 220ms ease,
+        visibility 220ms ease;
+    will-change: transform;
+}
+
+svg.menu.inner {
+    transform: scale(0.66) rotate(-100deg);
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+.menuCenter.inner {
+    transform: scale(0.66) rotate(-100deg) translate(-50%, -50%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+svg.menu.outer {
+    opacity: 0;
+    visibility: hidden;
+}
+
+svg.menu>g>path {
+    fill: #00000000;
+}
+
+svg.menu>g.sector{
+    transition:
+        transform 120ms ease-out,
+        filter 120ms ease-out;
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform;
+}
+
+svg.menu>g.sector>path {
+    cursor: pointer;
+    /* transition: 0.1s; */
+}
+
+svg.menu>g.sector>text,
+svg.menu>g.sector>use {
+    z-index: 20;
+    cursor: pointer;
+    color: #1E90FF;
+    transition: scale .2s linear, color .2s linear;
+}
+
+svg.menu>g.sector.selected>use {
+    scale: 1.01;
+    color: #fff;
+
+    filter: drop-shadow(0 0 7px #fff);
+}
+
+svg.menu>g.sector.selected {
+    perspective: 1000px;
+}
+
+svg.menu>g.center:hover>circle {
+    fill: rgb(30, 144, 255);
+    fill-opacity: 0.25;
+}
+
+svg.menu>g.center>circle {
+    position: relative;
+    cursor: pointer;
+    fill: #151515;
+    stroke: #1E90FF;
+    stroke-width: 1;
+    box-shadow: 0px 0px 72.2px 0px #1E90FF69 inset;
+}
+
+svg.menu>g.center>text,
+svg.menu>g.center>use {
+    cursor: pointer;
+}
+
+
+.menuHolder {
+    position: relative;
+}
+
+.menuCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    width: 62%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+
+    cursor: pointer;
+    z-index: 20;
+
+    background: #151515;
+    border: 4px solid #1E90FF;
+    box-shadow: 0px 0px 60px 4px #1E90FF69 inset;
+    overflow: hidden;
+}
+
+.menuInfoTitle {
+    color: white;
+    font-weight: 600;
+    font-size: 20px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.menuCenterIcon {
+    width: 16px;
+    height: 16px;
+    color: white;
+    pointer-events: none;
+}
+
+.menuCenterActionIcon svg {
+    width: 100%;
+    height: 100%;
+    fill: #fff;
+}
+
+.menuInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuCenterAction {
+    position: absolute;
+    bottom: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid #1E90FF;
+    transition: .1s transform linear;
+}
+.menuCenterAction:hover{
+    transform: translateX(-50%) scale(1.1);
+}
+
+.menuCenterAction * {
+    pointer-events: none;
+}
+
+.menuCenterActionIcon {
+    width: 16px;
+}
+
+.pointerBeam {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 100px;
+    height: 268px;
+
+    transform-origin: 50% 0%;
+    transform: translate(-50%, 0) rotate(90deg);
+
+    pointer-events: none;
+    z-index: 1;
+}
+
+.pointerBeamInner {
+    width: 100%;
+    height: 100%;
+
+    clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
+
+    background: linear-gradient(
+        to bottom,
+        rgba(30, 144, 255, 0.9) 0%,
+        rgba(16, 77, 153, 0.65) 35%,
+        rgba(30, 144, 255, 0) 100%
+    );
+    opacity: 0.9;
+}
+
+.pointerBeamInner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 446px;
+    height: 446px;
+    border-radius: 50%;
+    border: 5px solid var(--theme-primary, #1e90ff);
+}

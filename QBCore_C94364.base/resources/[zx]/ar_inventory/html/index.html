@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main id="app" class="hidden">
+  <section class="panel bag">
+    <header>
+      <h1>الحقيبة</h1>
+      <p class="hint">اسحب الغرض لنقله أو دمجه • نقرتين أو كليك يمين للاستخدام</p>
+    </header>
+    <div id="grid" class="grid" aria-label="خانات الحقيبة"></div>
+  </section>
+
+  <aside class="panel side">
+    <div class="gauge">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="track" cx="50" cy="50" r="42"/>
+        <circle id="ring" class="fill" cx="50" cy="50" r="42"/>
+      </svg>
+      <div class="gauge-text">
+        <strong id="w">0</strong>
+        <span>من <b id="mw">150</b> كغم</span>
+      </div>
+    </div>
+
+    <div id="detail" class="detail empty">
+      <p class="none">اختر غرضاً لعرض تفاصيله</p>
+      <div class="info">
+        <div class="head">
+          <div id="dIcon" class="d-icon"></div>
+          <div>
+            <h2 id="dName"></h2>
+            <p id="dDesc"></p>
+          </div>
+        </div>
+        <dl>
+          <div><dt>وزن الحبة</dt><dd id="dWeight"></dd></div>
+          <div><dt>العدد</dt><dd id="dCount"></dd></div>
+          <div><dt>الوزن الكلي</dt><dd id="dTotal"></dd></div>
+        </dl>
+        <label class="amount">
+          <span>الكمية</span>
+          <div class="amt-row">
+            <button type="button" id="aMin" aria-label="نقصان">−</button>
+            <input id="amt" type="number" min="1" value="1" inputmode="numeric">
+            <button type="button" id="aPlus" aria-label="زيادة">+</button>
+            <button type="button" id="aHalf" class="chip">النصف</button>
+            <button type="button" id="aAll" class="chip">الكل</button>
+          </div>
+        </label>
+        <div class="actions">
+          <button type="button" id="bUse" class="primary">استخدام</button>
+          <button type="button" id="bGive">إعطاء لأقرب لاعب</button>
+          <button type="button" id="bDrop" class="danger">رمي</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<nav id="hotbar" aria-label="خانات الاستخدام السريع"></nav>
+<div id="prompt" class="prompt hidden"><kbd>E</kbd><span id="promptText"></span><em>التقاط</em></div>
+<div id="toasts"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

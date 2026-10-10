@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+:root { --blue: #0096ff; --glow: rgba(0, 150, 255, .55); --bg: rgba(8, 14, 26, .88); }
+* { margin: 0; box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
+body { background: transparent; overflow: hidden; color: #e8f3ff; }
+
+#prompt { position: fixed; bottom: 18%; left: 50%; transform: translate(-50%, 20px); opacity: 0; display: flex; align-items: center; gap: 12px; padding: 10px 18px 10px 14px; background: var(--bg); border: 1px solid var(--blue); border-radius: 10px; box-shadow: 0 0 22px var(--glow); transition: .25s; }
+#prompt.show { opacity: 1; transform: translate(-50%, 0); }
+#prompt .key { min-width: 34px; height: 34px; display: grid; place-items: center; background: var(--blue); color: #02101e; font-weight: 800; border-radius: 7px; box-shadow: 0 0 12px var(--glow); }
+#prompt .txt { font-size: 15px; }
+
+#toasts { position: fixed; top: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; width: 300px; }
+.toast { padding: 12px 16px; background: var(--bg); border-right: 4px solid var(--blue); border-radius: 8px; box-shadow: 0 0 16px rgba(0, 150, 255, .3); font-size: 14px; animation: in .3s ease; }
+.toast.success { border-color: #2ee59d; } .toast.error { border-color: #ff4d6a; } .toast.warn { border-color: #ffc14d; }
+.toast.out { opacity: 0; transform: translateX(30px); transition: .3s; }
+@keyframes in { from { opacity: 0; transform: translateX(30px); } }
+
+#progress { position: fixed; bottom: 12%; left: 50%; transform: translateX(-50%); width: 320px; opacity: 0; transition: .25s; }
+#progress.show { opacity: 1; }
+#progress .label { text-align: center; font-size: 13px; margin-bottom: 8px; letter-spacing: .5px; }
+#progress .bar { height: 8px; background: rgba(255, 255, 255, .12); border-radius: 6px; overflow: hidden; border: 1px solid rgba(0, 150, 255, .5); }
+#progress .fill { height: 100%; width: 0; background: linear-gradient(90deg, #0066cc, var(--blue), #4dc3ff); box-shadow: 0 0 14px var(--glow); }
+#progress .hint { text-align: center; font-size: 11px; opacity: .6; margin-top: 7px; }
+
+#game { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(2, 8, 18, .55); opacity: 0; pointer-events: none; transition: .25s; }
+#game.show { opacity: 1; }
+#game .box { text-align: center; padding: 26px 34px 22px; background: var(--bg); border: 1px solid var(--blue); border-radius: 16px; box-shadow: 0 0 40px var(--glow); }
+#game h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; letter-spacing: .5px; }
+#game .sub { font-size: 12px; opacity: .65; margin-bottom: 14px; }
+#game canvas { display: block; margin: 0 auto; }
+#game .row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 24px; }
+.pins, .lives { display: flex; gap: 8px; }
+.pin { width: 26px; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .15); }
+.pin.on { background: var(--blue); box-shadow: 0 0 10px var(--glow); }
+.life { width: 14px; height: 14px; border-radius: 50%; background: #ff4d6a; box-shadow: 0 0 8px rgba(255, 77, 106, .6); transition: .2s; }
+.life.lost { background: rgba(255, 255, 255, .15); box-shadow: none; }
+#game .keys { margin-top: 12px; font-size: 11px; opacity: .6; }
+#game .box.shake { animation: shake .3s; }
+@keyframes shake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+</style>
+</head>
+<body>
+<div id="prompt"><div class="key" id="pkey">E</div><div class="txt" id="ptxt"></div></div>
+<div id="toasts"></div>
+<div id="game"><div class="box" id="gbox"><h2 id="glabel"></h2><div class="sub">اضغط SPACE لما المؤشر يدخل المنطقة الزرقاء</div><canvas id="cv" width="260" height="260"></canvas><div class="row"><div class="pins" id="pins"></div><div class="lives" id="lives"></div></div><div class="keys">SPACE: تثبيت &nbsp;·&nbsp; X / ESC: إلغاء</div></div></div>
+<script>
+const $ = (id) => document.getElementById(id);
+let G = null;
+const cv = $('cv'), ctx = cv.getContext('2d');
+const rad = (d) => d * Math.PI / 180;
+
+function newZone() { G.zoneStart = Math.random() * 360; }
+function drawGame() {
+    ctx.clearRect(0, 0, 260, 260);
+    const c = 130, r = 108;
+    ctx.lineWidth = 16; ctx.strokeStyle = 'rgba(255,255,255,.1)';
+    ctx.beginPath(); ctx.arc(c, c, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = '#0096ff'; ctx.shadowColor = '#0096ff'; ctx.shadowBlur = 16;
+    ctx.beginPath(); ctx.arc(c, c, r, rad(G.zoneStart - 90), rad(G.zoneStart + G.zone - 90)); ctx.stroke();
+    ctx.shadowBlur = 0;
+    const a = rad(G.angle - 90);
+    ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(c + Math.cos(a) * 62, c + Math.sin(a) * 62); ctx.lineTo(c + Math.cos(a) * (r + 12), c + Math.sin(a) * (r + 12)); ctx.stroke();
+    ctx.fillStyle = '#0096ff'; ctx.beginPath(); ctx.arc(c, c, 8, 0, Math.PI * 2); ctx.fill();
+}
+function loop(ts) {
+    if (!G) return;
+    const dt = Math.min((ts - G.last) / 1000, 0.05); G.last = ts;
+    G.angle = (G.angle + G.speed * G.dir * dt + 360) % 360;
+    drawGame();
+    requestAnimationFrame(loop);
+}
+function renderHud() {
+    $('pins').innerHTML = Array.from({ length: G.pins }, (_, i) => '<div class="pin' + (i < G.set ? ' on' : '') + '"></div>').join('');
+    $('lives').innerHTML = Array.from({ length: G.maxLives }, (_, i) => '<div class="life' + (i >= G.lives ? ' lost' : '') + '"></div>').join('');
+}
+function endGame(result) {
+    if (!G) return;
+    const g = G; G = null;
+    $('game').classList.remove('show');
+    fetch('https://og_robberies/gameResult', { method: 'POST', body: JSON.stringify({ result }) });
+}
+function press() {
+    if (!G || G.locked) return;
+    const diff = ((G.angle - G.zoneStart) % 360 + 360) % 360;
+    if (diff <= G.zone) {
+        G.set++;
+        G.speed *= 1.08; G.dir *= -1;
+        if (G.set >= G.pins) { G.locked = true; renderHud(); return setTimeout(() => endGame('success'), 350); }
+        newZone();
+    } else {
+        G.lives--;
+        const b = $('gbox'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+        if (G.lives <= 0) { G.locked = true; renderHud(); return setTimeout(() => endGame('fail'), 450); }
+    }
+    renderHud();
+}
+window.addEventListener('keydown', (e) => {
+    if (!G) return;
+    if (e.code === 'Space') { e.preventDefault(); press(); }
+    else if (e.code === 'KeyX' || e.code === 'Escape' || e.code === 'Backspace') endGame('cancel');
+});
+function startGame(d) {
+    G = { pins: d.pins, lives: d.lives, maxLives: d.lives, zone: d.zone, speed: d.speed, set: 0, angle: Math.random() * 360, dir: 1, last: performance.now(), locked: false };
+    newZone(); renderHud();
+    $('glabel').textContent = d.label || '';
+    $('game').classList.add('show');
+    requestAnimationFrame(loop);
+}
+window.addEventListener('message', (e) => {
+    const d = e.data;
+    if (d.type === 'prompt') {
+        $('pkey').textContent = d.key || 'E';
+        if (d.text) $('ptxt').textContent = d.text;
+        $('prompt').classList.toggle('show', !!d.show);
+    } else if (d.type === 'notify') {
+        const t = document.createElement('div');
+        t.className = 'toast ' + (d.kind || 'info');
+        t.textContent = d.text;
+        $('toasts').appendChild(t);
+        setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 4500);
+    } else if (d.type === 'game') {
+        if (d.show) startGame(d); else { G = null; $('game').classList.remove('show'); }
+    }
+});
+</script>
+</body>
+</html>

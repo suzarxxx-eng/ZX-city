@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OG Menu</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="menu" class="hidden">
+  <div class="bg"></div>
+
+  <header class="top">
+    <div class="brand"><b id="bTitle">OG</b><span id="bSub">ROLEPLAY</span></div>
+    <div class="topR">
+      <div class="pill"><i class="live"></i><span id="tOnline">0 / 48</span><small>متصل</small></div>
+      <div class="clock"><div class="t"><b id="tClock">00:00</b><em id="tAmPm">م</em></div><small id="tDate"></small></div>
+    </div>
+  </header>
+
+  <main class="grid">
+    <!-- حالة المدينة -->
+    <section class="tile t-logo" style="--a:#f2c14e;--ab:rgba(242,193,78,.16)">
+      <span class="wm" data-i="shield"></span>
+      <div class="th"><span class="ic" data-i="shield"></span><div><b>حالة المدينة</b><small>الطوارئ بالدوام</small></div></div>
+      <div class="cityStats">
+        <div><i class="d cop"></i><span>شرطة</span><b id="sCops">0</b></div>
+        <div><i class="d ems"></i><span>إسعاف</span><b id="sEms">0</b></div>
+      </div>
+      <div class="disc"><span class="ic sm" data-i="chat" style="--a:#5865f2"></span><span id="sDiscord"></span></div>
+    </section>
+
+    <!-- الهوية -->
+    <section class="tile t-profile" style="--a:#5aa2ff;--ab:rgba(90,162,255,.16)">
+      <div class="pHead">
+        <div class="avatar" id="pAv">OG</div>
+        <div class="pName"><small>هوية المواطن</small><h2 id="pName">—</h2><span class="pid">ID <b id="pId">0</b> • <b id="pCid">—</b></span></div>
+      </div>
+      <div class="rows">
+        <div><span class="ic sm" data-i="cash" style="--a:#2fbf71"></span><div><small>الكاش</small><b id="pCash" class="money">$0</b></div></div>
+        <div><span class="ic sm" data-i="bank" style="--a:#14a3a3"></span><div><small>البنك</small><b id="pBank" class="money">$0</b></div></div>
+        <div><span class="ic sm" data-i="phone" style="--a:#8b5cf6"></span><div><small>الهاتف</small><b id="pPhone">—</b></div></div>
+        <div><span class="ic sm" data-i="cake" style="--a:#e8508a"></span><div><small>الميلاد</small><b id="pBirth">—</b></div></div>
+      </div>
+    </section>
+
+    <!-- الأرينا -->
+    <section class="tile t-arena" style="--a:#ff4d6d;--ab:rgba(255,77,109,.16)">
+      <div class="th"><span class="ic" data-i="target"></span><div><b>الأرينا</b><small>كل واحد لنفسه</small></div></div>
+      <div class="aList" id="aList"></div>
+      <button type="button" class="leaveA hidden" id="aLeave">اطلع من الأرينا</button>
+      <div class="aFoot"><b id="aTotal">0</b> يقاتل هسه</div>
+    </section>
+
+    <!-- تيد ام -->
+    <section class="tile t-tdm click" data-act="tdm" style="--a:#b27bff;--ab:rgba(178,123,255,.16)">
+      <span class="wm" data-i="users"></span>
+      <div class="th"><span class="ic" data-i="users"></span><div><b>تيد ام</b><small>غرف خاصة • فريقين • لحد 8 لاعبين</small></div><span class="go" data-i="arrow"></span></div>
+      <div class="tdmBody" id="tdmBody"></div>
+    </section>
+
+    <!-- الخريطة -->
+    <section class="tile t-map click" data-act="map" style="--a:#3fd0ff;--ab:rgba(63,208,255,.16)">
+      <span class="wm" data-i="map"></span>
+      <div class="th"><span class="ic" data-i="map"></span><div><b>الخريطة</b><small>لوس سانتوس</small></div><span class="go" data-i="arrow"></span></div>
+    </section>
+
+    <!-- سياراتي -->
+    <section class="tile t-cars click" data-act="cars" style="--a:#ff8a4c;--ab:rgba(255,138,76,.16)">
+      <span class="wm" data-i="car"></span>
+      <div class="th"><span class="ic" data-i="car"></span><div><b>سياراتي</b><small id="cCount">0 سيارة</small></div><span class="go" data-i="arrow"></span></div>
+    </section>
+
+    <!-- شغلي -->
+    <section class="tile t-job" style="--a:#ffd24c;--ab:rgba(255,210,76,.16)">
+      <span class="wm" data-i="brief"></span>
+      <div class="th"><span class="ic" data-i="brief"></span><div><b id="jName">—</b><small id="jGrade"></small></div></div>
+      <div class="duty" id="jDuty"></div>
+    </section>
+
+    <!-- الإعدادات -->
+    <section class="tile t-settings click" data-act="settings" style="--a:#c3cbd9;--ab:rgba(195,203,217,.14)">
+      <span class="wm" data-i="gear"></span>
+      <div class="th"><span class="ic" data-i="gear"></span><div><b>الإعدادات</b><small>الصوت • الصورة • الأزرار</small></div><span class="go" data-i="arrow"></span></div>
+    </section>
+  </main>
+
+  <footer class="bottom">
+    <button type="button" class="btn" id="bResume"><kbd>ESC</kbd> رجوع للعب</button>
+    <button type="button" class="btn danger" id="bQuit"><span class="ic sm" data-i="exit"></span>خروج من السيرفر</button>
+  </footer>
+
+  <div id="modal" class="modal hidden"><div class="mBox" id="mBox"></div></div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

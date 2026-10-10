@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="center.css">
+<link rel="stylesheet" href="sell.css">
+</head>
+<body>
+
+<div id="meter" class="hidden">
+  <div class="m-title">🚕 عداد التكسي</div>
+  <div class="m-fare"><span id="mFare">0</span> $</div>
+  <div class="m-row"><span>المسافة</span><b id="mDist">0.0 كم</b></div>
+</div>
+
+<div id="stage" class="hidden">
+  <main id="tablet">
+    <nav id="side">
+      <div class="brand">🚕 تكسي</div>
+      <button class="tab on" data-tab="requests">الطلبات</button>
+      <button class="tab" data-tab="progress">تقدمي</button>
+      <button class="tab" data-tab="cars">السيارات</button>
+      <button class="tab" data-tab="board">المتصدرين</button>
+      <button id="closeBtn" class="close">إغلاق</button>
+    </nav>
+    <section id="content">
+      <header>
+        <h1 id="title">طلبات الزبائن</h1>
+        <div class="lvl"><span id="lvlTxt"></span></div>
+      </header>
+      <div class="xpbar"><i id="xpBar"></i></div>
+      <div id="view"></div>
+    </section>
+  </main>
+</div>
+
+<!-- مركز التوظيف (html/center.js + center.css) -->
+<div id="center" class="hidden">
+  <main id="ocApp">
+    <nav id="ocSide">
+      <div class="oc-brand"><small>روتردام</small><b>مركز التوظيف</b></div>
+      <button class="oc-tab on" data-tab="jobs">💼 الوظائف</button>
+      <button class="oc-tab" data-tab="mine">⭐ وظيفتي</button>
+      <button class="oc-tab" data-tab="board">🏆 المتصدرين</button>
+      <div class="oc-me" id="ocMe"></div>
+      <button class="oc-close" id="ocClose">إغلاق (ESC)</button>
+    </nav>
+    <section id="ocContent">
+      <div class="oc-head"><div class="oc-title" id="ocTitle"></div><div class="oc-chip" id="ocChip"></div></div>
+      <div id="ocView"></div>
+    </section>
+    <div id="ocModal" class="hidden">
+      <div class="oc-mbox">
+        <div class="oc-mtitle" id="ocMTitle"></div>
+        <p id="ocMTxt"></p>
+        <div class="oc-actions"><button class="oc-btn oc-red" id="ocMYes"></button><button class="oc-btn oc-ghost" id="ocMNo">إلغاء</button></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="sellpanel" class="hidden">
+  <div class="sp-head"><small>روتردام</small><h1 id="spTitle"></h1><p>اختر اللي تريد تبيعه • [ESC] إغلاق</p></div>
+  <div class="sp-list" id="spList"></div>
+  <div class="sp-foot"><button class="sp-btn sp-all" id="spAll">بيع الكل</button><button class="sp-btn sp-x" id="spClose">إغلاق</button></div>
+</div>
+
+<script src="script.js"></script>
+<script src="center.js"></script>
+<script src="sell.js"></script>
+</body>
+</html>

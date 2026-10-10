@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="reset.css" rel="stylesheet" />
+        <link href="style.css" rel="stylesheet" />
+        <title>Character Studio</title>
+        <script src="vue.js"></script>
+        <script src="swal2.js"></script>
+    </head>
+    <body>
+        <div id="app" @mousedown="dragStart" @mouseup="dragEnd" @mouseleave="dragEnd" @mousemove="dragMove" @wheel="wheel">
+            <!-- Loading -->
+            <transition name="fade">
+                <div class="loading" v-if="show.loading">
+                    <div class="spinner"></div>
+                    <p>{{loadingText}}</p>
+                </div>
+            </transition>
+
+            <header class="hdr" v-if="dockVisible || show.delete">
+                <h1>CHARACTER STUDIO</h1>
+                <span>شخصية واحدة لكل لاعب</span>
+            </header>
+
+            <!-- Main: existing character -->
+            <transition name="fade">
+                <aside class="panel left" v-if="show.main && mainChar">
+                    <h2>الهوية</h2>
+                    <div class="name">{{mainChar.charinfo.firstname}} {{mainChar.charinfo.lastname}}</div>
+                    <div class="stat"><span>الوظيفة</span><b>{{mainChar.job.label}}</b></div>
+                    <div class="stat"><span>الكاش</span><b>${{dollar.format(mainChar.money.cash)}}</b></div>
+                    <div class="stat"><span>البنك</span><b>${{dollar.format(mainChar.money.bank)}}</b></div>
+                    <div class="stat"><span>الجنسية</span><b>{{mainChar.charinfo.nationality}}</b></div>
+                    <button class="btn" @click="play_character">دخول المدينة</button>
+                    <button class="btn ghost" v-if="allowDelete" @click="prepareDelete">حذف الشخصية</button>
+                </aside>
+            </transition>
+
+            <!-- Main: no character yet -->
+            <transition name="fade">
+                <aside class="panel left" v-if="show.main && !mainChar">
+                    <h2>مرحباً</h2>
+                    <div class="name">لسا ما عندك هوية</div>
+                    <p class="note">سوّي شخصيتك: الاسم، الأصل، الملامح، والملابس. تكدر تسوي شخصية وحدة فقط.</p>
+                    <button class="btn" @click="startRegister">أنشئ هويتك</button>
+                </aside>
+            </transition>
+
+            <!-- Delete -->
+            <transition name="fade">
+                <div class="modal" v-if="show.delete">
+                    <div class="modal-box">
+                        <p>{{translate('deletechar_description')}}</p>
+                        <button class="btn" @click="delete_character">{{translate('confirm')}}</button>
+                        <button class="btn ghost" @click="cancelDelete">{{translate('cancel')}}</button>
+                    </div>
+                </div>
+            </transition>
+
+            <!-- Step 1: identity -->
+            <transition name="fade">
+                <aside class="panel right" v-if="show.register">
+                    <div class="steps"><span class="on">١ الهوية</span><span>٢ المظهر</span></div>
+                    <label class="field"><span>{{translate('firstname')}}</span><input type="text" v-model="registerData.firstname" maxlength="16" /></label>
+                    <label class="field"><span>{{translate('lastname')}}</span><input type="text" v-model="registerData.lastname" maxlength="16" /></label>
+                    <label class="field" v-if="customNationality"><span>{{translate('nationality')}}</span><input type="text" v-model="registerData.nationality" /></label>
+                    <label class="field" v-else>
+                        <span>{{translate('nationality')}}</span>
+                        <select v-model="registerData.nationality"><option v-for="n in nationalities" :key="n" :value="n">{{n}}</option></select>
+                    </label>
+                    <label class="field">
+                        <span>{{translate('gender')}}</span>
+                        <select v-model="registerData.gender">
+                            <option value="male">{{translate('male')}}</option>
+                            <option value="female">{{translate('female')}}</option>
+                        </select>
+                    </label>
+                    <label class="field"><span>{{translate('birthdate')}}</span><input type="date" v-model="registerData.date" min="1900-01-01" /></label>
+                    <button class="btn" @click="toCreator">التالي: المظهر</button>
+                    <button class="btn ghost" @click="cancelCreate">رجوع</button>
+                </aside>
+            </transition>
+
+            <!-- Step 2: appearance -->
+            <transition name="fade">
+                <aside class="panel right wide" v-if="show.creator">
+                    <div class="steps"><span>١ الهوية</span><span class="on">٢ المظهر</span></div>
+                    <div class="tabs">
+                        <div v-for="(t, i) in tabs" :key="t.id" class="tab" :class="{on: tab === i}" @click="tab = i; open = 0">{{t.label}}</div>
+                    </div>
+                    <div class="scroll">
+                        <div class="acc" v-for="(g, gi) in tabs[tab].groups" :key="tab + '-' + gi" :class="{open: open === gi}">
+                            <div class="acc-head" @click="toggleGroup(gi)"><span>{{g.title}}</span><i>{{open === gi ? '−' : '+'}}</i></div>
+                            <div class="acc-body" v-show="open === gi">
+                                <template v-for="r in g.rows">
+                                    <div class="row" :key="r.id" v-if="r.type === 'step'">
+                                        <label>{{r.label}}</label>
+                                        <div class="stepper">
+                                            <button @click="step(r, -1)">›</button>
+                                            <b>{{stepText(r)}}</b>
+                                            <button @click="step(r, 1)">‹</button>
+                                        </div>
+                                    </div>
+                                    <div class="row" :key="r.id" v-else>
+                                        <label>{{r.label}}<em>{{sliders[r.key]}}</em></label>
+                                        <input type="range" :min="r.min" :max="r.max" :step="r.stepBy" v-model.number="sliders[r.key]" @input="slide(r)" />
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn ghost small" @click="randomize">مظهر عشوائي</button>
+                    <button class="btn" @click="create_character">حفظ وإنشاء الشخصية</button>
+                    <button class="btn ghost" @click="backToRegister">رجوع</button>
+                </aside>
+            </transition>
+
+            <!-- Time of day -->
+            <div class="scenes" v-if="dockVisible && scenes.length > 1">
+                <button v-for="s in scenes" :key="s.id" :class="{on: scene === s.id}" @click="pickScene(s.id)">{{s.label}}</button>
+            </div>
+
+            <!-- Character view controls: zoom / height / rotate -->
+            <div class="dock" v-if="dockVisible">
+                <div class="dock-group">
+                    <button class="round" @click="nudge('rot', -20, -360, 360)" title="يسار">⟲</button>
+                    <div class="slim">
+                        <span>الدوران</span>
+                        <input type="range" min="-180" max="180" step="1" :value="view.rot" @input="setView({rot: +$event.target.value})" />
+                    </div>
+                    <button class="round" @click="nudge('rot', 20, -360, 360)" title="يمين">⟳</button>
+                </div>
+                <div class="dock-group">
+                    <button class="round" @click="nudge('zoom', -0.1, 0, 1)">−</button>
+                    <div class="slim">
+                        <span>التقريب</span>
+                        <input type="range" min="0" max="1" step="0.01" :value="view.zoom" @input="setView({zoom: +$event.target.value})" />
+                    </div>
+                    <button class="round" @click="nudge('zoom', 0.1, 0, 1)">+</button>
+                </div>
+                <div class="dock-group">
+                    <div class="slim">
+                        <span>الارتفاع</span>
+                        <input type="range" min="0" max="1" step="0.01" :value="view.height" @input="setView({height: +$event.target.value})" />
+                    </div>
+                </div>
+                <div class="dock-group presets">
+                    <button @click="preset('body')">جسم</button>
+                    <button @click="preset('half')">نص</button>
+                    <button @click="preset('face')">وجه</button>
+                    <button @click="resetView">إعادة</button>
+                </div>
+            </div>
+            <div class="hint" v-if="dockVisible">اسحب بالماوس للتدوير · العجلة للتقريب · A / D و W / S من الكيبورد</div>
+        </div>
+
+        <script type="text/javascript" src="profanity.js"></script>
+        <script type="text/javascript" src="validation.js"></script>
+        <script type="text/javascript" src="translations.js"></script>
+        <script type="text/javascript" src="app.js"></script>
+    </body>
+</html>

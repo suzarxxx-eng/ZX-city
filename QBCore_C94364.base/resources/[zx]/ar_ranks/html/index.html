@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
+</head>
+<body>
+
+<div id="panel" class="hidden">
+  <header>
+    <span class="logo"><svg viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5z"/></svg></span>
+    <div class="title">
+      <b id="jobName">الأمن العام</b>
+      <small>لوحة الرتب</small>
+    </div>
+    <div class="meCard">
+      <span id="meIns" class="ins"></span>
+      <div><b id="meRank"></b><small id="meName"></small></div>
+    </div>
+    <button type="button" id="closeBtn" class="x" title="إغلاق">✕</button>
+  </header>
+
+  <main>
+    <aside>
+      <div class="sideHead">
+        <b>سلّم الرتب</b>
+        <button type="button" id="allBtn" class="chip on">الكل</button>
+      </div>
+      <div id="ladder"></div>
+    </aside>
+
+    <section>
+      <div class="tools">
+        <input id="search" type="text" placeholder="ابحث بالاسم أو الكود..." autocomplete="off">
+        <div class="seg">
+          <button type="button" data-f="all" class="on">الكل</button>
+          <button type="button" data-f="online">متصل</button>
+          <button type="button" data-f="duty">بالدوام</button>
+        </div>
+      </div>
+      <div class="stats">
+        <span><i class="d all"></i>المنتسبين <b id="cAll">0</b></span>
+        <span><i class="d on"></i>متصل <b id="cOn">0</b></span>
+        <span><i class="d duty"></i>بالدوام <b id="cDuty">0</b></span>
+      </div>
+      <ul id="members"></ul>
+
+      <div id="hireBox" class="hire hidden">
+        <b>تعيين منتسب جديد</b>
+        <input id="hireId" type="number" min="1" placeholder="رقم اللاعب (ID)">
+        <button type="button" id="hireBtn" class="primary">تعيين برتبة مستجد</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="hidden"></div>
+
+<div id="popup" class="hidden">
+  <div class="pIns" id="pIns"></div>
+  <small id="pHead"></small>
+  <b id="pRank"></b>
+  <span id="pBy"></span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

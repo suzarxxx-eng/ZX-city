@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" media="print" onload="this.media='all'">
+</head>
+<body>
+<div id="fx" class="hidden">
+  <div id="ecgWrap">
+    <canvas id="ecg"></canvas>
+    <div id="bpm"><span class="hrt">♥</span><b id="bpmVal">0</b></div>
+  </div>
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="veins"></div>
+  <div id="drops"></div>
+  <div id="info">
+    <div id="medic"><kbd>E</kbd><span>طلب مسعف</span></div>
+    <div id="tag"><span>أنت مصاب</span></div>
+    <div id="timer" class="hidden"></div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

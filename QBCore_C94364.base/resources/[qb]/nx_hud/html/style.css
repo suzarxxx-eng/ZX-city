@@ -1,0 +1,188 @@
+/* nx_hud â€” performance notes
+   - Animate only transform/opacity/stroke-dash on small SVGs.
+   - backdrop-filter is used ONLY in the (rarely open) menu and the glass theme panels.
+   - will-change is limited to elements that animate continuously. */
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:transparent;font-family:'Segoe UI',Roboto,Arial,sans-serif;user-select:none}
+
+/* ---------- Themes (CSS variables) ---------- */
+#app{
+  --a:#00f0ff; --b:#ff2bd6; --txt:#eaf6ff; --panel:rgba(10,8,28,.62); --edge:rgba(0,240,255,.35);
+  --hp:#ff3b6b; --ar:#3b9bff; --fd:#ffb43b; --th:#2be0ff; --st:#9dff5a;
+  --warn:#ff3b3b; --ok:#3bff8a; --yel:#ffd23b;
+  --glow:rgba(0,240,255,.35); --glow2:rgba(0,240,255,.2);
+  --s:1; --o:1;
+}
+#app[data-theme=dark]    {--glow:rgba(255,255,255,.2);--glow2:rgba(255,255,255,.12);--a:#e5e7eb;--b:#9ca3af;--txt:#f3f4f6;--panel:rgba(14,14,16,.82);--edge:rgba(255,255,255,.18);
+  --hp:#f87171;--ar:#93c5fd;--fd:#fbbf24;--th:#7dd3fc;--st:#a7f3d0}
+#app[data-theme=glass]   {--glow:rgba(255,255,255,.3);--glow2:rgba(255,255,255,.18);--a:#ffffff;--b:#8ecbff;--txt:#ffffff;--panel:rgba(255,255,255,.14);--edge:rgba(255,255,255,.45);
+  --hp:#ff7a9a;--ar:#8ecbff;--fd:#ffd27a;--th:#9ff1ff;--st:#c6ff9a}
+#app[data-theme=tactical]{--glow:rgba(123,211,74,.3);--glow2:rgba(123,211,74,.2);--a:#7bd34a;--b:#c9b458;--txt:#e6f0d8;--panel:rgba(14,22,12,.78);--edge:rgba(123,211,74,.35);
+  --hp:#d9534f;--ar:#6b9bd1;--fd:#c9b458;--th:#5fb8c9;--st:#7bd34a}
+
+/* ---------- Widgets ---------- */
+.widget{position:fixed;transform:scale(var(--s));transform-origin:top left;opacity:var(--o);
+  transition:opacity .25s;color:var(--txt);pointer-events:none}
+.widget.off{display:none}
+.widget.hidden{opacity:0;visibility:hidden}
+/* "3D" look: a perspective tilt plus layered drop-shadow glow */
+.tilt{transform:perspective(700px) rotateX(16deg);transform-origin:50% 100%;
+  filter:drop-shadow(0 6px 8px rgba(0,0,0,.55)) drop-shadow(0 0 10px var(--glow))}
+body.editing .widget{pointer-events:auto;cursor:move;outline:1px dashed var(--a);outline-offset:6px}
+body.editing .widget.hidden{opacity:.55;visibility:visible}
+
+/* ---------- Status bars ---------- */
+#bars{display:flex;flex-direction:column;gap:8px;width:260px;padding:10px 12px;border-radius:16px;background:var(--panel);
+  border:1px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.fill{display:block;width:100%;height:100%;transform-origin:left;transform:scaleX(1);transition:transform .35s ease}
+.num{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #000}
+.fade{opacity:.3}
+#bars>*{transition:opacity .4s}
+
+/* Health: big skewed bar, armor is a thin bar INSIDE it */
+.hpwrap{display:flex;align-items:center;gap:8px}
+.hico{width:22px;height:22px;fill:var(--hp);filter:drop-shadow(0 0 5px var(--hp));flex:none}
+.hp{position:relative;flex:1;height:26px;border-radius:7px;background:rgba(255,255,255,.1);overflow:hidden;transform:skewX(-12deg);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.hp>.fill{background:linear-gradient(90deg,#b0173d,var(--hp));box-shadow:0 0 12px var(--hp)}
+.hp .num{position:absolute;right:10px;top:50%;transform:translateY(-50%) skewX(12deg);font-size:13px}
+.ar{position:absolute;left:6px;right:44px;bottom:3px;height:5px;border-radius:3px;background:rgba(0,0,0,.45);overflow:hidden;transition:opacity .4s}
+.ar .fill{background:var(--ar);box-shadow:0 0 6px var(--ar)}
+.ar.fade{opacity:.15}
+
+/* Hunger: segmented blocks + hex badge. Thirst: smooth glowing pill + round badge */
+.row2{display:flex;flex-direction:column;gap:7px}
+.food,.drink{display:flex;align-items:center;gap:8px}
+.food .num,.drink .num{width:26px;text-align:right}
+.hex,.drop{width:22px;height:22px;display:grid;place-items:center;flex:none}
+.hex{background:rgba(255,255,255,.1);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.hex svg{width:13px;height:13px;fill:var(--fd)}
+.drop{border-radius:50%;background:rgba(255,255,255,.1);box-shadow:0 0 8px var(--th)}
+.drop svg{width:12px;height:12px;fill:var(--th)}
+.segs,.pill{position:relative;flex:1;overflow:hidden}
+.segs{height:12px;background:rgba(255,255,255,.1);
+  -webkit-mask:repeating-linear-gradient(90deg,#000 0 12px,transparent 12px 15px);mask:repeating-linear-gradient(90deg,#000 0 12px,transparent 12px 15px)}
+.segs .fill{background:var(--fd);box-shadow:0 0 8px var(--fd)}
+.pill{height:8px;border-radius:5px;background:rgba(255,255,255,.1)}
+.pill .fill{border-radius:5px;background:linear-gradient(90deg,#0a7dff,var(--th));box-shadow:0 0 8px var(--th)}
+
+/* Stamina: hairline under everything */
+.st{height:3px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+.st .fill{background:var(--st);box-shadow:0 0 5px var(--st)}
+
+/* Low / critical states (transform+opacity only) */
+.low .fill,.crit .fill{filter:brightness(1.3)}
+.low{animation:pulse 1s ease-in-out infinite}
+.crit{animation:pulse .55s ease-in-out infinite}
+.low .hico,.crit .hico,.low .hex svg,.crit .hex svg,.low .drop svg,.crit .drop svg{fill:var(--warn)}
+@keyframes pulse{50%{opacity:.55}}
+/* ---------- Vehicle ---------- */
+.veh{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:26px;background:var(--panel);
+  border:1px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.speedo{position:relative;width:190px;height:190px}
+.dial{width:100%;height:100%}
+.dial circle{fill:none;stroke-linecap:round}
+.track{stroke:rgba(255,255,255,.1);stroke-width:9}
+.track.thin{stroke-width:5}
+.arc.spd{stroke:var(--a);stroke-width:9;transition:stroke-dasharray .12s linear;filter:drop-shadow(0 0 6px var(--a))}
+.arc.rpm{stroke:var(--b);stroke-width:5;transition:stroke-dasharray .12s linear;filter:drop-shadow(0 0 5px var(--b))}
+.arc.rpm.red{stroke:var(--warn)}
+#needle{transform-origin:100px 100px;transition:transform .12s linear;display:none}
+#needle line{stroke:var(--b);stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 4px var(--b))}
+#needle circle{fill:var(--a)}
+#ticks{display:none}
+#ticks line{stroke:rgba(255,255,255,.55);stroke-width:2}
+#ticks text{fill:var(--txt);font-size:9px;text-anchor:middle;dominant-baseline:middle;opacity:.8}
+.read{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:6px}
+.read b{font-size:46px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 12px var(--a)}
+.read small{font-size:11px;letter-spacing:3px;opacity:.7;margin-top:2px}
+.read em{font-style:normal;font-size:22px;font-weight:700;color:var(--b);margin-top:6px;text-shadow:0 0 8px var(--b)}
+.digi-rpm{display:none;width:160px;height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.digi-rpm i{display:block;height:100%;width:100%;background:var(--b);transform-origin:left;transform:scaleX(0);transition:transform .1s linear}
+.side{display:flex;flex-direction:column;gap:12px;align-items:center}
+.fuel{position:relative;width:14px;height:100px;border-radius:7px;background:rgba(255,255,255,.12);overflow:hidden}
+.fuel i{position:absolute;inset:0;background:var(--fd);transform-origin:bottom;transform:scaleY(1);transition:transform .3s}
+.fuel i.low{background:var(--warn)}
+.fuel span{position:absolute;bottom:-18px;left:-6px;width:26px;text-align:center;font-size:10px;opacity:.7}
+.icons{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.icons svg{width:22px;height:22px;fill:#fff;transition:fill .3s;filter:drop-shadow(0 1px 2px #000)}
+.icons svg.ok{fill:var(--ok)}
+.icons svg.yel{fill:var(--yel)}
+.icons svg.red{fill:var(--warn)}
+.icons svg.blink{animation:blink .6s steps(2) infinite}
+.icons svg.na{display:none}
+@keyframes blink{50%{opacity:.15}}
+
+/* style: digital */
+[data-style=digital] .dial,[data-style=digital] #ticks{display:none}
+[data-style=digital] .speedo{width:auto;height:auto}
+[data-style=digital] .read{position:static;flex-direction:row;align-items:baseline;gap:8px;padding:0}
+[data-style=digital] .read b{font-size:58px}
+[data-style=digital] .veh{flex-wrap:wrap;width:260px;justify-content:space-between;border-radius:18px}
+[data-style=digital] .digi-rpm{display:block}
+[data-style=digital] .side{flex-direction:row;width:100%}
+[data-style=digital] .fuel{width:90px;height:8px}
+[data-style=digital] .fuel i{transform-origin:left;transform:scaleX(1)}
+[data-style=digital] .fuel span{display:none}
+[data-style=digital] .icons{flex-direction:row;margin:0}
+/* style: arc = default. gauge: needle + ticks, thinner speed arc */
+[data-style=gauge] #needle,[data-style=gauge] #ticks{display:block}
+[data-style=gauge] .arc.spd{stroke-width:3;opacity:.7}
+[data-style=gauge] .read{padding-top:70px}
+[data-style=gauge] .read b{font-size:34px}
+
+/* ---------- Duty badge ---------- */
+.badge{display:flex;align-items:center;gap:10px;padding:9px 16px;border-radius:14px;background:var(--panel);
+  border:1px solid var(--edge);font-weight:600;letter-spacing:.5px;font-size:15px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 0 1px var(--glow2);
+  transform-origin:0 50%;transform:perspective(700px) rotateY(-10deg)}
+.badge span:first-child{font-size:20px}
+
+/* ---------- Cinematic bars ---------- */
+.bar{position:fixed;left:0;width:100%;height:12vh;background:#000;transition:transform .6s cubic-bezier(.2,.8,.2,1);z-index:5}
+.bar.top{top:0;transform:translateY(-100%)}
+.bar.bottom{bottom:0;transform:translateY(100%)}
+body.cine .bar{transform:none}
+
+/* ---------- Menu ---------- */
+#menu{position:fixed;right:30px;top:50%;width:330px;max-height:86vh;overflow-y:auto;padding:18px;border-radius:20px;
+  background:rgba(12,12,22,.94);border:1px solid var(--edge);color:var(--txt);
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 30px var(--glow2);
+  transform:translate(40px,-50%) perspective(900px) rotateY(-12deg);opacity:0;visibility:hidden;pointer-events:none;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s .35s;z-index:10}
+body.menu #menu{transform:translate(0,-50%) perspective(900px) rotateY(-4deg);opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+#menu header{display:flex;justify-content:space-between;align-items:center}
+#menu h1{font-size:18px;letter-spacing:1px}
+#menu h2{font-size:11px;text-transform:uppercase;letter-spacing:2px;opacity:.6;margin:16px 0 8px}
+.hint{font-size:12px;opacity:.55;margin-top:4px}
+#menu button{font:inherit;color:inherit;cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);
+  padding:7px 10px;border-radius:9px;transition:background .15s,border-color .15s}
+#menu button:hover{background:rgba(255,255,255,.14)}
+#menu .seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+#menu .seg button{flex:1;font-size:12px}
+#menu .seg button.on,#menu .pri{background:var(--a);color:#001014;border-color:var(--a);font-weight:700}
+.tg{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px;cursor:pointer}
+.tg input{display:none}
+.tg span{width:36px;height:20px;border-radius:10px;background:rgba(255,255,255,.18);position:relative;transition:background .2s;flex:none}
+.tg span::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+.tg input:checked+span{background:var(--a)}
+.tg input:checked+span::after{transform:translateX(16px)}
+.rg{display:flex;align-items:center;gap:10px;font-size:14px;padding:5px 0}
+.rg input{flex:1;accent-color:var(--a)}
+.rg b{width:38px;text-align:right;font-weight:600;font-size:12px}
+#menu footer{display:flex;gap:8px;margin-top:18px}
+#menu footer button{flex:1}
+
+@media (prefers-reduced-motion:reduce){.low,.crit,.icons svg.blink{animation:none}}
+
+
+
+/* Arabic: no letter-spacing (breaks letter joining) */
+#menu,#menu *{letter-spacing:0!important;text-transform:none}
+#menu{direction:rtl;text-align:right}
+.rg b{text-align:left}
+
+
+/* Option: no panel frame (keeps a soft shadow for readability) */
+#app.noframe #bars,#app.noframe .veh,#app.noframe .badge{background:none;border-color:transparent;box-shadow:none}
